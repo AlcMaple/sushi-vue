@@ -1,16 +1,25 @@
 <script setup>
+import { ref } from "vue";
+
+const searchText = ref("");
+
+const handleSearch = () => {
+  console.log("Search for:", searchText.value);
+};
 </script>
 
 <template>
   <div class="Search">
     <div class="InputContainer">
       <input
+        v-model="searchText"
         placeholder="Search.."
         id="input"
         class="input"
         name="text"
         type="text"
       />
+      <i class="fas fa-search search-icon" @click="handleSearch"></i>
     </div>
   </div>
 </template>
@@ -28,9 +37,7 @@
 .InputContainer {
   width: 450px;
   height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   background: linear-gradient(
     to bottom,
     rgb(227, 213, 255),
@@ -43,7 +50,7 @@
 }
 
 .input {
-  width: 440px;
+  width: 100%;
   height: 40px;
   border: none;
   outline: none;
@@ -51,8 +58,19 @@
   background-color: rgb(255, 255, 255);
   border-radius: 30px;
   padding-left: 15px;
+  padding-right: 40px;
   letter-spacing: 0.8px;
   color: rgb(19, 19, 19);
   font-size: 13.4px;
+  margin-top: 5px;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: rgb(19, 19, 19);
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+  margin-top: 15px;
 }
 </style>

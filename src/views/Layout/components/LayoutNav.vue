@@ -49,23 +49,23 @@
     }
     .user-info {
       display: flex;
-      li {
-        a {
-          padding: 0 15px;
-          color: #cdcdcd;
-          line-height: 1;
-          display: inline-block;
+    }
+    li {
+      a {
+        padding: 0 15px;
+        color: #cdcdcd;
+        line-height: 1;
+        display: inline-block;
 
-          i {
-            font-size: 14px;
-            margin-right: 2px;
-          }
+        i {
+          font-size: 14px;
+          margin-right: 2px;
         }
+      }
 
-        ~ li {
-          a {
-            border-left: 2px solid #666;
-          }
+      ~ li {
+        a {
+          border-left: 2px solid #666;
         }
       }
     }
