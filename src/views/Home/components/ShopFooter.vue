@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed } from "vue";
+import { ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const props = defineProps({
   selectedItems: {
     type: Array,
@@ -19,9 +22,32 @@ const totalQuantity = computed(() => {
   return props.selectedItems.reduce((sum, item) => sum + item.quantity, 0);
 });
 
-// 点击支付按钮时的逻辑
+const isDialogVisible = ref(false);
+
 const handlePayment = () => {
   console.log("支付操作", totalPrice.value, totalQuantity.value);
+  if (totalQuantity.value === 0) {
+    ElMessageBox.alert("请选择商品后再支付！", "提示", {
+      confirmButtonText: "确定",
+    });
+    return;
+  }
+  isDialogVisible.value = true;
+};
+
+const confirmPayment = () => {
+  isDialogVisible.value = false;
+  router.push({
+    name: "payment",
+    query: {
+      totalPrice: totalPrice.value,
+      totalQuantity: totalQuantity.value,
+    },
+  });
+};
+
+const cancelPayment = () => {
+  isDialogVisible.value = false;
 };
 </script>
 
@@ -33,6 +59,27 @@ const handlePayment = () => {
     </div>
     <button class="pay-button" @click="handlePayment">支付</button>
   </div>
+
+  <el-dialog
+    v-model="isDialogVisible"
+    title="确认支付"
+    width="400px"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    custom-class="payment-dialog"
+  >
+    <p>
+      您即将支付 <strong>${{ totalPrice }}</strong> 购买
+      <strong>{{ totalQuantity }}</strong> 件商品。
+    </p>
+    <p>确认继续支付吗？</p>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="cancelPayment">取消</el-button>
+        <el-button type="primary" @click="confirmPayment">确认支付</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -66,5 +113,19 @@ const handlePayment = () => {
 
 .pay-button:hover {
   background-color: #e64a19;
+}
+
+.payment-dialog {
+  border-radius: 10px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.dialog-footer .el-button {
+  padding: 6px 20px;
 }
 </style>
