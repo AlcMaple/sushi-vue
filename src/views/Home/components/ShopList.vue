@@ -1,10 +1,8 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
-// 定义 emit
 const emit = defineEmits();
 
-// 确保初始数据结构正确
 const products = ref(
   Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
@@ -15,62 +13,94 @@ const products = ref(
   }))
 );
 
-// // 切换商品的选择状态
-// const toggleSelection = (product) => {
-//   product.selected = !product.selected;
-// };
-
-// 获取选中的商品列表
 const getSelectedItems = () => {
   return products.value
     ? products.value.filter((product) => product.selected)
     : [];
 };
 
-// 监听商品数据的变化，更新父组件
 watch(
   () => getSelectedItems(),
   (newSelectedItems) => {
-    // 使用 emit 来触发父组件的事件
     emit("update:selected", newSelectedItems);
   },
   { deep: true }
 );
+
+const loading = ref(false);
+const noMore = ref(false);
+const containerRef = ref(null);
+
+const load = () => {
+  if (loading.value || noMore.value) return;
+  loading.value = true;
+
+  setTimeout(() => {
+    const nextProducts = Array.from({ length: 10 }, (_, i) => ({
+      id: products.value.length + i + 1,
+      name: `商品 ${products.value.length + i + 1}`,
+      price: (Math.random() * 100).toFixed(2),
+      quantity: 1,
+      selected: false,
+    }));
+    products.value.push(...nextProducts);
+    loading.value = false;
+
+    // 模拟数据到达上限
+    if (products.value.length >= 50) {
+      noMore.value = true;
+    }
+  }, 1000);
+};
 </script>
 
 <template>
-  <div class="shop-list-container">
-    <div class="shop-list" v-for="product in products" :key="product.id">
-      <div class="card">
-        <!-- 复选框 -->
-        <label class="checkbox-container">
-          <input type="checkbox" v-model="product.selected" />
-          <span class="checkmark"></span>
-        </label>
-        <!-- 图片 -->
-        <img
-          src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
-          alt="Product Image"
-          class="card-image"
-        />
-        <!-- 标题 -->
-        <h3 class="card-title">{{ product.name }}</h3>
-        <!-- 价格 -->
-        <p class="card-price">${{ product.price }}</p>
+  <el-scrollbar height="calc(100vh - 100px)" ref="containerRef">
+    <div class="shop-list-container">
+      <div
+        v-infinite-scroll="load"
+        :infinite-scroll-disabled="loading || noMore"
+        :infinite-scroll-immediate="false"
+        :infinite-scroll-distance="10"
+        :infinite-scroll-delay="200"
+        class="scroll-container"
+      >
+        <div class="shop-list" v-for="product in products" :key="product.id">
+          <div class="card">
+            <label class="checkbox-container">
+              <input type="checkbox" v-model="product.selected" />
+              <span class="checkmark"></span>
+            </label>
+            <img
+              src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
+              alt="Product Image"
+              class="card-image"
+            />
+            <h3 class="card-title">{{ product.name }}</h3>
+            <p class="card-price">${{ product.price }}</p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="shop-list-footer"></div>
+    <div v-if="loading" class="loading-indicator">加载中...</div>
+    <div v-if="noMore" class="loading-indicator">没有更多数据了</div>
+    <div class="shop-list-footer"></div>
+  </el-scrollbar>
 </template>
 
 <style scoped>
 /* 容器样式 */
 .shop-list-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
   padding: 18px;
   box-sizing: border-box;
+}
+
+.scroll-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
 }
 
 .shop-list {
@@ -85,7 +115,6 @@ watch(
   height: 64px;
 }
 
-/* 卡片样式 */
 .card {
   position: relative;
   background: #fff;
@@ -94,11 +123,6 @@ watch(
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
 }
-
-/* .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-} */
 
 .card-image {
   width: 100%;
@@ -111,18 +135,15 @@ watch(
   font-size: 1.2rem;
   font-weight: bold;
   color: #333;
-  /* text-align: center; */
 }
 
 .card-price {
-  /* text-align: center; */
   padding: 0 12px;
   font-size: 1rem;
   color: #888;
   margin-bottom: 12px;
 }
 
-/* 复选框样式 */
 .checkbox-container {
   position: absolute;
   top: 12px;
@@ -166,5 +187,12 @@ watch(
 
 .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
   display: block;
+}
+
+.loading-indicator {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
+  color: #888;
 }
 </style>
