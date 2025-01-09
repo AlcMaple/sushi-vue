@@ -26,6 +26,11 @@ onMounted(() => {
   togglePasswordVisibility("password", "loginPassword");
   togglePasswordVisibility("passwordCreate", "loginPasswordCreate");
 });
+
+const LoginSubmit = () => {
+  console.log("LoginSubmit");
+  localStorage.setItem("use-auth", true);
+};
 </script>
 
 <template>
@@ -95,7 +100,9 @@ onMounted(() => {
             </div>
           </div>
 
-          <button type="submit" class="login__button">Login</button>
+          <button type="submit" class="login__button" @click="LoginSubmit">
+            Login
+          </button>
         </form>
 
         <p class="login__switch">

@@ -40,7 +40,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  localStorage.setItem('use-auth', true);
+  // localStorage.removeItem('use-auth');
   console.log("localStroage token: ", localStorage.getItem('use-auth'));
 
   if (to.name === 'auth' && localStorage.getItem('use-auth')) {

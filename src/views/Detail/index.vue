@@ -157,7 +157,18 @@ onMounted: {
   ];
 }
 
-//判断权限
+// 设置点赞和收藏的状态
+const isLiked = ref(false);
+const isFavorited = ref(false);
+
+// 点击处理函数
+const toggleLike = () => {
+  isLiked.value = !isLiked.value;
+};
+
+const toggleFavorite = () => {
+  isFavorited.value = !isFavorited.value;
+};
 </script>
 
 <template>
@@ -174,29 +185,42 @@ onMounted: {
       <ArticlePreview :content="article.content" />
     </el-card>
     <!-- 评论区 传入评论参数 -->
-    <!-- <ArticleComment
-    v-if="article.commentabled"
-    :contentments="contentment"
-    :aid="article.aid"
-  /> -->
+    <ArticleComment
+      v-if="article.commentabled"
+      :contentments="contentment"
+      :aid="article.aid"
+    />
 
-    <div class="raise-container"></div>
+    <!-- 点赞和收藏按钮区域 -->
+    <div class="raise-container">
+      <!-- 点赞按钮 -->
+      <button @click="toggleLike" class="icon-btn">
+        <i :class="isLiked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
+      </button>
+
+      <!-- 收藏按钮 -->
+      <button @click="toggleFavorite" class="icon-btn">
+        <i :class="isFavorited ? 'fas fa-star' : 'far fa-star'"></i>
+      </button>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .detail-container {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  padding: 20px 0;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #f7f7f7;
 }
 
 .card {
   width: 950px;
   border-radius: 9px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -216,6 +240,40 @@ onMounted: {
   font-size: 25px;
 }
 
+.raise-container {
+  position: fixed;
+  margin-left: 1010px;
+  margin-top: 180px;
+  background: #eef1f4;
+  width: 40px;
+  height: 140px;
+  padding: 12px 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.raise-container button {
+  background: none;
+  border: none;
+  color: #4e9df1;
+  font-size: 28px;
+  margin-bottom: 30px;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.raise-container button:hover {
+  color: #007acc;
+  transform: scale(1.1);
+}
+
+.raise-container button.active {
+  color: #007acc;
+}
+
+.raise-container button.active:hover {
+  color: #005b99;
+}
+
 .tagLine {
   margin-left: 16px;
   margin-bottom: 10px;
@@ -226,7 +284,7 @@ onMounted: {
   margin-bottom: 5px;
 }
 
-.raise-container {
+/* .raise-container {
   position: fixed;
   margin-left: 1010px;
   margin-top: 180px;
@@ -235,7 +293,7 @@ onMounted: {
   height: 108px;
   padding: 12px 6px;
   border-radius: 6px;
-}
+} */
 
 /* 手机端 */
 @media (max-width: 768px) {

@@ -2,7 +2,39 @@
 <script setup>
 </script>
 
-<template></template>
+<template>
+  <div class="card">
+    <div class="con">
+      <div class="title">
+        <span class="iconfont">&#xe60c;</span>
+        评论
+      </div>
+      <div class="subCon">
+        <div class="text">评论内容</div>
+        <div class="tagLine">
+          <div class="tag">
+            <span class="iconfont">&#xe60c;</span>
+            标签1
+          </div>
+          <div class="tag">
+            <span class="iconfont">&#xe60c;</span>
+            标签2
+          </div>
+        </div>
+        <div class="tagLine">
+          <div class="tag">
+            <span class="iconfont">&#xe60c;</span>
+            标签3
+          </div>
+          <div class="tag">
+            <span class="iconfont">&#xe60c;</span>
+            标签4
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .flex-grow {

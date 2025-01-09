@@ -4,6 +4,7 @@ const router = useRouter();
 
 const handleLogout = () => {
   console.log("logout");
+  localStorage.removeItem("use-auth");
   router.push("/auth");
 };
 </script>
