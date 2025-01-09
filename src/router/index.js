@@ -3,6 +3,7 @@ import Home from '@/views/Home/index.vue'
 import Auth from '@/views/Auth/index.vue'
 import Layout from '@/views/Layout/index.vue'
 import Payment from '@/views/Payment/index.vue'
+import Detail from '@/views/Detail/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +17,12 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: Home,
+        },
+        {
+          // path: 'detail/:id',
+          path: '/detail',
+          name: 'detail',
+          component: Detail,
         },
       ]
     },
