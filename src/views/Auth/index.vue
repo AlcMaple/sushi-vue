@@ -1,52 +1,31 @@
 <script setup>
-/*=============== SHOW HIDE PASSWORD LOGIN ===============*/
-// const passwordAccess = (loginPass, loginEye) => {
-//   const input = document.getElementById(loginPass),
-//     iconEye = document.getElementById(loginEye);
+import { ref, onMounted } from "vue";
 
-//   iconEye.addEventListener("click", () => {
-//     // Change password to text
-//     input.type === "password"
-//       ? (input.type = "text")
-//       : (input.type = "password");
+// 显示/隐藏密码
+const togglePasswordVisibility = (inputId, iconId) => {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
 
-//     // Icon change
-//     iconEye.classList.toggle("ri-eye-fill");
-//     iconEye.classList.toggle("ri-eye-off-fill");
-//   });
-// };
-// passwordAccess("password", "loginPassword");
+  if (input && icon) {
+    icon.addEventListener("click", () => {
+      // 切换密码类型
+      input.type = input.type === "password" ? "text" : "password";
+      // 切换图标
+      icon.classList.toggle("ri-eye-fill");
+      icon.classList.toggle("ri-eye-off-fill");
+    });
+  }
+};
 
-// /*=============== SHOW HIDE PASSWORD CREATE ACCOUNT ===============*/
-// const passwordRegister = (loginPass, loginEye) => {
-//   const input = document.getElementById(loginPass),
-//     iconEye = document.getElementById(loginEye);
+// 切换登录/注册视图
+const showRegister = ref(false);
+const switchToRegister = () => (showRegister.value = true);
+const switchToLogin = () => (showRegister.value = false);
 
-//   iconEye.addEventListener("click", () => {
-//     // Change password to text
-//     input.type === "password"
-//       ? (input.type = "text")
-//       : (input.type = "password");
-
-//     // Icon change
-//     iconEye.classList.toggle("ri-eye-fill");
-//     iconEye.classList.toggle("ri-eye-off-fill");
-//   });
-// };
-// passwordRegister("passwordCreate", "loginPasswordCreate");
-
-// /*=============== SHOW HIDE LOGIN & CREATE ACCOUNT ===============*/
-// const loginAcessRegister = document.getElementById("loginAccessRegister"),
-//   buttonRegister = document.getElementById("loginButtonRegister"),
-//   buttonAccess = document.getElementById("loginButtonAccess");
-
-// buttonRegister.addEventListener("click", () => {
-//   loginAcessRegister.classList.add("active");
-// });
-
-// buttonAccess.addEventListener("click", () => {
-//   loginAcessRegister.classList.remove("active");
-// });
+onMounted(() => {
+  togglePasswordVisibility("password", "loginPassword");
+  togglePasswordVisibility("passwordCreate", "loginPasswordCreate");
+});
 </script>
 
 <template>
@@ -59,27 +38,28 @@
     <mask id="mask0" mask-type="alpha">
       <path
         d="M342.407 73.6315C388.53 56.4007 394.378 17.3643 391.538 
-            0H566V840H0C14.5385 834.991 100.266 804.436 77.2046 707.263C49.6393 
-            591.11 115.306 518.927 176.468 488.873C363.385 397.026 156.98 302.824 
-            167.945 179.32C173.46 117.209 284.755 95.1699 342.407 73.6315Z"
+           0H566V840H0C14.5385 834.991 100.266 804.436 77.2046 707.263C49.6393 
+           591.11 115.306 518.927 176.468 488.873C363.385 397.026 156.98 302.824 
+           167.945 179.32C173.46 117.209 284.755 95.1699 342.407 73.6315Z"
       />
     </mask>
 
     <g mask="url(#mask0)">
       <path
         d="M342.407 73.6315C388.53 56.4007 394.378 17.3643 391.538 
-            0H566V840H0C14.5385 834.991 100.266 804.436 77.2046 707.263C49.6393 
-            591.11 115.306 518.927 176.468 488.873C363.385 397.026 156.98 302.824 
-            167.945 179.32C173.46 117.209 284.755 95.1699 342.407 73.6315Z"
+           0H566V840H0C14.5385 834.991 100.266 804.436 77.2046 707.263C49.6393 
+           591.11 115.306 518.927 176.468 488.873C363.385 397.026 156.98 302.824 
+           167.945 179.32C173.46 117.209 284.755 95.1699 342.407 73.6315Z"
       />
-
-      <!-- Insert your image (recommended size: 1000 x 1200) -->
-      <!-- <image class="login__img" href="assets/img/bg-img.jpg" /> -->
     </g>
   </svg>
 
   <!--=============== LOGIN ===============-->
-  <div class="login container grid" id="loginAccessRegister">
+  <div
+    class="login container grid"
+    :class="{ active: showRegister }"
+    id="loginAccessRegister"
+  >
     <!--===== LOGIN ACCESS =====-->
     <div class="login__access">
       <h1 class="login__title">Log in to your account.</h1>
@@ -96,7 +76,6 @@
                 class="login__input"
               />
               <label for="text" class="login__label">Account</label>
-
               <i class="ri-id-card-fill login__icon"></i>
             </div>
 
@@ -109,7 +88,6 @@
                 class="login__input"
               />
               <label for="password" class="login__label">Password</label>
-
               <i
                 class="ri-eye-off-fill login__icon login__password"
                 id="loginPassword"
@@ -117,14 +95,12 @@
             </div>
           </div>
 
-          <a href="#" class="login__forgot">Forgot your password?</a>
-
           <button type="submit" class="login__button">Login</button>
         </form>
 
         <p class="login__switch">
           Don't have an account?
-          <button id="loginButtonRegister">Create Account</button>
+          <button @click="switchToRegister">Create Account</button>
         </p>
       </div>
     </div>
@@ -136,22 +112,6 @@
       <div class="login__area">
         <form action="" class="login__form">
           <div class="login__content grid">
-            <!-- <div class="login__group grid">
-                     <div class="login__box">
-                        <input type="text" id="names" required placeholder=" " class="login__input">
-                        <label for="names" class="login__label">Names</label>
-
-                        <i class="ri-id-card-fill login__icon"></i>
-                     </div>
-
-                     <div class="login__box">
-                        <input type="text" id="surnames" required placeholder=" " class="login__input">
-                        <label for="surnames" class="login__label">Surnames</label>
-
-                        <i class="ri-id-card-fill login__icon"></i>
-                     </div>
-                  </div> -->
-
             <div class="login__box">
               <input
                 type="text"
@@ -161,7 +121,6 @@
                 class="login__input"
               />
               <label for="textCreate" class="login__label">Account</label>
-
               <i class="ri-id-card-fill login__icon"></i>
             </div>
 
@@ -174,7 +133,6 @@
                 class="login__input"
               />
               <label for="passwordCreate" class="login__label">Password</label>
-
               <i
                 class="ri-eye-off-fill login__icon login__password"
                 id="loginPasswordCreate"
@@ -187,17 +145,14 @@
 
         <p class="login__switch">
           Already have an account?
-          <button id="loginButtonAccess">Log In</button>
+          <button @click="switchToLogin">Log In</button>
         </p>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-/*=============== GOOGLE FONTS ===============*/
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap");
-
+<style>
 /*=============== VARIABLES CSS ===============*/
 :root {
   /*========== Colors ==========*/
