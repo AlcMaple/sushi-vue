@@ -39,4 +39,17 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach((to, from, next) => {
+  localStorage.setItem('use-auth', true);
+  console.log("localStroage token: ", localStorage.getItem('use-auth'));
+
+  if (to.name === 'auth' && localStorage.getItem('use-auth')) {
+    next('/')
+  } else if (to.name !== 'auth' && !localStorage.getItem('use-auth')) {
+    next('/auth')
+  } else {
+    next()
+  }
+})
+
 export default router
