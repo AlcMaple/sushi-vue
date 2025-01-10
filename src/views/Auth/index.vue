@@ -1,5 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { register, login } from "@/apis/user";
+import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 // 显示/隐藏密码
 const togglePasswordVisibility = (inputId, iconId) => {
@@ -27,9 +32,60 @@ onMounted(() => {
   togglePasswordVisibility("passwordCreate", "loginPasswordCreate");
 });
 
-const LoginSubmit = () => {
+const LoginSubmit = (event) => {
+  event.preventDefault();
   console.log("LoginSubmit");
+  // 表单验证
+  const username = document.getElementById("text").value;
+  const password = document.getElementById("password").value;
+  if (username === "" || password === "") {
+    ElMessage.error("Please fill in all fields");
+    return;
+  }
+
+  // 调用登录接口
+  login({ username, password })
+    .then((response) => {
+      ElMessage.success("Login successful");
+      localStorage.setItem("use-auth", true);
+      router.push("/");
+    })
+    .catch((error) => {
+      if (error.response.status === 401) {
+        ElMessage.error("Incorrect username or password");
+      } else {
+        ElMessage.error("服务器错误，请稍后再试");
+      }
+    });
   localStorage.setItem("use-auth", true);
+};
+
+const registerSubmit = (event) => {
+  event.preventDefault();
+  // console.log("registerSubmit");
+  // 表单验证
+  const username = document.getElementById("textCreate").value;
+  const password = document.getElementById("passwordCreate").value;
+  if (username === "" || password === "") {
+    ElMessage.error("Please fill in all fields");
+    return;
+  }
+
+  // 调用注册接口
+  register({ username, password })
+    .then((response) => {
+      ElMessage.success("Registration successful");
+      switchToLogin();
+    })
+    .catch((error) => {
+      console.log("error");
+
+      if (error.response.status === 400) {
+        ElMessage.error("Username already exists");
+      } else {
+        ElMessage.error("服务器错误，请稍后再试");
+      }
+    });
 };
 </script>
 
@@ -100,9 +156,7 @@ const LoginSubmit = () => {
             </div>
           </div>
 
-          <button type="submit" class="login__button" @click="LoginSubmit">
-            Login
-          </button>
+          <button class="login__button" @click="LoginSubmit">Login</button>
         </form>
 
         <p class="login__switch">
@@ -147,7 +201,9 @@ const LoginSubmit = () => {
             </div>
           </div>
 
-          <button type="submit" class="login__button">Create account</button>
+          <button class="login__button" @click="registerSubmit">
+            Create account
+          </button>
         </form>
 
         <p class="login__switch">
