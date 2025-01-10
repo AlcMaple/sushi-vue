@@ -1,17 +1,17 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
+import { getShopList } from "@/apis/shop";
 
 const emit = defineEmits();
 
-const products = ref(
-  Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    name: `Product Name ${i + 1}`,
-    price: (Math.random() * 100).toFixed(2),
-    quantity: 1,
-    selected: false,
-  }))
-);
+const products = ref();
+// Array.from({ length: 10 }, (_, i) => ({
+//   id: i + 1,
+//   name: `Product Name ${i + 1}`,
+//   price: (Math.random() * 100).toFixed(2),
+//   quantity: 1,
+//   selected: false,
+// }))
 
 const getSelectedItems = () => {
   return products.value
@@ -35,23 +35,31 @@ const load = () => {
   if (loading.value || noMore.value) return;
   loading.value = true;
 
-  setTimeout(() => {
-    const nextProducts = Array.from({ length: 10 }, (_, i) => ({
-      id: products.value.length + i + 1,
-      name: `商品 ${products.value.length + i + 1}`,
-      price: (Math.random() * 100).toFixed(2),
-      quantity: 1,
-      selected: false,
-    }));
-    products.value.push(...nextProducts);
-    loading.value = false;
+  // setTimeout(() => {
+  //   const nextProducts = Array.from({ length: 10 }, (_, i) => ({
+  //     id: products.value.length + i + 1,
+  //     name: `商品 ${products.value.length + i + 1}`,
+  //     price: (Math.random() * 100).toFixed(2),
+  //     quantity: 1,
+  //     selected: false,
+  //   }));
+  //   products.value.push(...nextProducts);
+  //   loading.value = false;
 
-    // 模拟数据到达上限
-    if (products.value.length >= 50) {
-      noMore.value = true;
-    }
-  }, 1000);
+  //   // 模拟数据到达上限
+  //   if (products.value.length >= 50) {
+  //     noMore.value = true;
+  //   }
+  // }, 1000);
 };
+
+onMounted(() => {
+  getShopList().then((res) => {
+    console.log("shop list", res);
+
+    // products.value = res.data.data;
+  });
+});
 </script>
 
 <template>

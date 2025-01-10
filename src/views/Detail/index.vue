@@ -4,10 +4,11 @@ import { useRoute } from "vue-router";
 import ArticleComment from "./components/ArticleComment.vue";
 import ArticlePreview from "./components/ArticlePreview.vue";
 import { onMounted, ref } from "vue";
+import { getShopDetail } from "@/apis/shop";
 
 // 模拟文章数据
 const article = ref({
-  title: "前端vue入门(模拟数据 组件复用 :-))",
+  // title: "前端vue入门(模拟数据 组件复用 :-))",
   content:
     "# Linux\n" +
     "***vue :*** [vue3](https://cn.vuejs.org/)\n" +
@@ -22,71 +23,9 @@ const article = ref({
     "***Java :*** [Java教程](https://www.runoob.com/java/java-tutorial.html)\n" +
     "***Spring :*** [Spring教程](https://spring.io/guides)\n" +
     "***SpringBoot :*** [SpringBoot教程](https://spring.io/projects/spring-boot)\n" +
-    "***SpringCloud :*** [SpringCloud教程](https://spring.io/projects/spring-cloud)\n" +
-    "## 数据库\n" +
-    "***MySQL :*** [MySQL教程](https://www.runoob.com/mysql/mysql-tutorial.html)\n" +
-    "***Redis :*** [Redis教程](https://www.runoob.com/redis/redis-tutorial.html)\n" +
-    "## 工具\n" +
-    "***Git :*** [Git教程](https://www.runoob.com/git/git-tutorial.html)\n" +
-    "***VSCode :*** [VSCode教程](https://code.visualstudio.com/docs)\n" +
-    "***Postman :*** [Postman教程](https://www.postman.com/downloads/)\n" +
-    "## 其他\n" +
-    "***Linux :*** [Linux教程](http://linux.vbird.org/linux_basic/)\n" +
-    "***Markdown :*** [Markdown教程](https://www.runoob.com/markdown/markdown-tutorial.html)\n" +
-    "***正则表达式 :*** [正则表达式教程](https://www.runoob.com/regexp/regexp-tutorial.html)\n" +
-    "***计算机网络 :*** [计算机网络教程](https://www.runoob.com/computer-network/computer-network-tutorial.html)\n" +
-    "***计算机组成原理 :*** [计算机组成原理教程](https://www.runoob.com/w3cnote/computer-organization-tutorial.html)\n" +
-    "***操作系统 :*** [操作系统教程](https://www.runoob.com/os/os-tutorial.html)\n" +
-    "***计算机系统结构 :*** [计算机系统结构教程](https://www.runoob.com/w3cnote/computer-system-structure-tutorial.html)\n" +
-    "***计算机安全 :*** [计算机安全教程](https://www.runoob.com/w3cnote/computer-security-tutorial.html)\n" +
-    "***计算机网络 :*** [计算机网络教程](https://www.runoob.com/w3cnote/computer-network-tutorial.html)\n" +
-    "***计算机应用 :*** [计算机应用教程](https://www.runoob.com/w3cnote/computer-applications-tutorial.html)\n" +
-    "***软件工程 :*** [软件工程教程](https://www.runoob.com/w3cnote/software-engineering-tutorial.html)\n" +
-    "***数据结构与算法 :*** [数据结构与算法教程](https://www.runoob.com/w3cnote/data-structure-and-algorithm-tutorial.html)\n" +
-    "***计算机视觉 :*** [计算机视觉教程](https://www.runoob.com/w3cnote/computer-vision-tutorial.html)\n" +
-    "***机器学习 :*** [机器学习教程](https://www.runoob.com/w3cnote/machine-learning-tutorial.html)\n" +
-    "***深度学习 :*** [深度学习教程](https://www.runoob.com/w3cnote/deep-learning-tutorial.html)\n" +
-    "***人工智能 :*** [人工智能教程](https://www.runoob.com/w3cnote/artificial-intelligence-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***区块链 :*** [区块链教程](https://www.runoob.com/w3cnote/blockchain-tutorial.html)\n" +
-    "***物联网 :*** [物联网教程](https://www.runoob.com/w3cnote/internet-of-things-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***大数据 :*** [大数据教程](https://www.runoob.com/w3cnote/big-data-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***区块链 :*** [区块链教程](https://www.runoob.com/w3cnote/blockchain-tutorial.html)\n" +
-    "***物联网 :*** [物联网教程](https://www.runoob.com/w3cnote/internet-of-things-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***大数据 :*** [大数据教程](https://www.runoob.com/w3cnote/big-data-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***区块链 :*** [区块链教程](https://www.runoob.com/w3cnote/blockchain-tutorial.html)\n" +
-    "***物联网 :*** [物联网教程](https://www.runoob.com/w3cnote/internet-of-things-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***大数据 :*** [大数据教程](https://www.runoob.com/w3cnote/big-data-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***区块链 :*** [区块链教程](https://www.runoob.com/w3cnote/blockchain-tutorial.html)\n" +
-    "***物联网 :*** [物联网教程](https://www.runoob.com/w3cnote/internet-of-things-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***大数据 :*** [大数据教程](https://www.runoob.com/w3cnote/big-data-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***区块链 :*** [区块链教程](https://www.runoob.com/w3cnote/blockchain-tutorial.html)\n" +
-    "***物联网 :*** [物联网教程](https://www.runoob.com/w3cnote/internet-of-things-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***大数据 :*** [大数据教程](https://www.runoob.com/w3cnote/big-data-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***区块链 :*** [区块链教程](https://www.runoob.com/w3cnote/blockchain-tutorial.html)\n" +
-    "***物联网 :*** [物联网教程](https://www.runoob.com/w3cnote/internet-of-things-tutorial.html)\n" +
-    "***云计算 :*** [云计算教程](https://www.runoob.com/w3cnote/cloud-computing-tutorial.html)\n" +
-    "***大数据 :*** [大数据教程](https://www.runoob.com/w3cnote/big-data-tutorial.html)\n",
-  tags: [
-    {
-      name: "Linux",
-    },
-    {
-      name: "入门",
-    },
-  ],
-  // 开启文章评论
-  commentabled: true,
+    "***SpringCloud :*** [SpringCloud教程](https://spring.io/projects/spring-cloud)\n" ,
+  // // 开启文章评论
+  // commentabled: true,
 });
 // 接收参数
 const route = useRoute();
@@ -94,10 +33,10 @@ const contentment = ref([]);
 // 发送请求接收数据
 onMounted: {
   //接收参数
-  //   getHomeArticleDetails(route.query.aid).then((res) => {
-  //     // console.log("获取文章信息", res.data);
-  //     article.value = res.data;
-  //   });
+  getShopDetail().then((res) => {
+    console.log("获取文章信息", res.data);
+    article.value = res.data;
+  });
   // 接收文章评论
   // console.log("这些哪里？", route.query.aid);
   //   getPublicContentment(route.query.aid).then((res) => {
@@ -175,13 +114,14 @@ const toggleFavorite = () => {
   <div class="detail-container">
     <el-card class="card">
       <!-- 标签栏 -->
-      <div style="margin-bottom: 10px">
+      <!-- <div style="margin-bottom: 10px">
         <el-text class="title">{{ article.title }}</el-text>
-      </div>
+      </div> -->
       <!-- <div class="tagLine">
         <el-text class="text">文章标签:</el-text>
         <el-tag class="tag" v-for="tag in article.tags">{{ tag.name }}</el-tag>
       </div> -->
+      <!-- <ArticlePreview :content="article.content" /> -->
       <ArticlePreview :content="article.content" />
     </el-card>
     <!-- 评论区 传入评论参数 -->
