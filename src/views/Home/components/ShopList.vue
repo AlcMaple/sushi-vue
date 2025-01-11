@@ -1,17 +1,28 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { getShopList } from "@/apis/shop";
+import { useRouter } from "vue-router";
+import { defineProps } from "vue";
 
+const router = useRouter();
 const emit = defineEmits();
 
-const products = ref();
-// Array.from({ length: 10 }, (_, i) => ({
-//   id: i + 1,
-//   name: `Product Name ${i + 1}`,
-//   price: (Math.random() * 100).toFixed(2),
-//   quantity: 1,
-//   selected: false,
-// }))
+const props = defineProps({
+  products: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+const products = ref(
+  Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    name: `Product Name ${i + 1}`,
+    price: (Math.random() * 100).toFixed(2),
+    quantity: 1,
+    selected: false,
+  }))
+);
 
 const getSelectedItems = () => {
   return products.value
@@ -35,25 +46,33 @@ const load = () => {
   if (loading.value || noMore.value) return;
   loading.value = true;
 
-  // setTimeout(() => {
-  //   const nextProducts = Array.from({ length: 10 }, (_, i) => ({
-  //     id: products.value.length + i + 1,
-  //     name: `商品 ${products.value.length + i + 1}`,
-  //     price: (Math.random() * 100).toFixed(2),
-  //     quantity: 1,
-  //     selected: false,
-  //   }));
-  //   products.value.push(...nextProducts);
-  //   loading.value = false;
+  setTimeout(() => {
+    console.log("当前数据", products.value);
 
-  //   // 模拟数据到达上限
-  //   if (products.value.length >= 50) {
-  //     noMore.value = true;
-  //   }
-  // }, 1000);
+    const nextProducts = Array.from({ length: 5 }, (_, i) => ({
+      id: products.value.length + i + 1,
+      name: `商品 ${products.value.length + i + 1}`,
+      price: (Math.random() * 100).toFixed(2),
+      quantity: 1,
+      selected: false,
+    }));
+    products.value.push(...nextProducts);
+    loading.value = false;
+
+    // 模拟数据到达上限
+    if (products.value.length >= 20) {
+      noMore.value = true;
+    }
+  }, 1000);
+};
+
+const goToDetail = (id) => {
+  console.log("go to detail", id);
+  router.push({ name: "detail", params: { id } });
 };
 
 onMounted(() => {
+  console.log("get shop list...");
   getShopList().then((res) => {
     console.log("shop list", res);
 
@@ -73,7 +92,12 @@ onMounted(() => {
         :infinite-scroll-delay="200"
         class="scroll-container"
       >
-        <div class="shop-list" v-for="product in products" :key="product.id">
+        <div
+          class="shop-list"
+          v-for="product in products"
+          :key="product.id"
+          @click="goToDetail(product.id)"
+        >
           <div class="card">
             <label class="checkbox-container">
               <input type="checkbox" v-model="product.selected" />

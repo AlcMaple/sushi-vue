@@ -19,8 +19,8 @@ const router = createRouter({
           component: Home,
         },
         {
-          // path: 'detail/:id',
-          path: '/detail',
+          path: 'detail/:id',
+          // path: '/detail',
           name: 'detail',
           component: Detail,
         },
@@ -39,17 +39,17 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  // localStorage.removeItem('use-auth');
-  console.log("localStroage token: ", localStorage.getItem('use-auth'));
+// router.beforeEach((to, from, next) => {
+//   // localStorage.removeItem('use-auth');
+//   console.log("localStroage token: ", localStorage.getItem('use-auth'));
 
-  if (to.name === 'auth' && localStorage.getItem('use-auth')) {
-    next('/')
-  } else if (to.name !== 'auth' && !localStorage.getItem('use-auth')) {
-    next('/auth')
-  } else {
-    next()
-  }
-})
+//   if (to.name === 'auth' && localStorage.getItem('use-auth')) {
+//     next('/')
+//   } else if (to.name !== 'auth' && !localStorage.getItem('use-auth')) {
+//     next('/auth')
+//   } else {
+//     next()
+//   }
+// })
 
 export default router

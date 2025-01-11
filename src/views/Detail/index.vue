@@ -8,7 +8,6 @@ import { getShopDetail } from "@/apis/shop";
 
 // 模拟文章数据
 const article = ref({
-  // title: "前端vue入门(模拟数据 组件复用 :-))",
   content:
     "# Linux\n" +
     "***vue :*** [vue3](https://cn.vuejs.org/)\n" +
@@ -23,7 +22,7 @@ const article = ref({
     "***Java :*** [Java教程](https://www.runoob.com/java/java-tutorial.html)\n" +
     "***Spring :*** [Spring教程](https://spring.io/guides)\n" +
     "***SpringBoot :*** [SpringBoot教程](https://spring.io/projects/spring-boot)\n" +
-    "***SpringCloud :*** [SpringCloud教程](https://spring.io/projects/spring-cloud)\n" ,
+    "***SpringCloud :*** [SpringCloud教程](https://spring.io/projects/spring-cloud)\n",
   // // 开启文章评论
   // commentabled: true,
 });

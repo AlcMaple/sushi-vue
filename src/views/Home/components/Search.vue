@@ -1,48 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import { searchShopList } from "@/apis/shop";
 import { ElMessage } from "element-plus";
 
 const searchText = ref("");
+const emit = defineEmits();
 
 const handleSearch = () => {
   console.log("Search for:", searchText.value);
-  /**
-   * // 查询商品列表
-export function searchShopList(params) {
-    return httpInstance({
-        url: '/sushi/search',
-        method: 'get',
-        params
-    })
-}
-
-@sushi_bp.route('/search', methods=['GET'])
-def search():
-    try:
-        keyword = request.args.get('keyword', '')
-        if not keyword:
-            return jsonify({
-                'status': 'error',
-                'message': '请提供搜索关键词'
-            }), 400
-
-        results = search_sushi(keyword)
-        return jsonify({
-            'status': 'success',
-            'data': results
-        })
-    except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
-
-
-   */
-
   searchShopList({ keyword: searchText.value }).then((res) => {
     console.log(res);
+    emit("search-data", res.data);
   });
 };
 </script>
