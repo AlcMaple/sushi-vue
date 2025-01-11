@@ -19,8 +19,7 @@ const router = createRouter({
           component: Home,
         },
         {
-          path: 'detail/:id',
-          // path: '/detail',
+          path: 'detail/:name',
           name: 'detail',
           component: Detail,
         },

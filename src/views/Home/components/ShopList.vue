@@ -14,15 +14,21 @@ const props = defineProps({
   },
 });
 
-const products = ref(
-  Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    name: `Product Name ${i + 1}`,
-    price: (Math.random() * 100).toFixed(2),
-    quantity: 1,
-    selected: false,
-  }))
-);
+const BASE_URL = "http://127.0.0.1:5001";
+
+const getFullImageUrl = (path) => {
+  return `${BASE_URL}/${path}`;
+};
+
+const pageData = ref([]);
+const products = ref([]);
+const ITEMS_PER_ROW = 3;
+
+const calculateDisplayCount = (total, increment) => {
+  const newCount = Math.min(total, products.value.length + increment);
+  // 向上取整到最近的 ITEMS_PER_ROW 的倍数
+  return Math.ceil(newCount / ITEMS_PER_ROW) * ITEMS_PER_ROW;
+};
 
 const getSelectedItems = () => {
   return products.value
@@ -38,6 +44,25 @@ watch(
   { deep: true }
 );
 
+watch(
+  () => props.products,
+  (newProducts) => {
+    if (newProducts && newProducts.length > 0) {
+      // 有搜索结果时，使用搜索结果
+      const processedData = newProducts.map((item) => ({
+        ...item,
+        image: getFullImageUrl(item.image),
+        quantity: 1,
+        selected: false,
+      }));
+
+      pageData.value = processedData;
+      products.value = pageData.value; // 直接显示所有搜索结果
+      noMore.value = true; // 搜索结果不需要加载更多
+    }
+  }
+);
+
 const loading = ref(false);
 const noMore = ref(false);
 const containerRef = ref(null);
@@ -47,36 +72,52 @@ const load = () => {
   loading.value = true;
 
   setTimeout(() => {
-    console.log("当前数据", products.value);
+    const currentCount = products.value.length;
+    let increment = 5; // 每次增加5个
 
-    const nextProducts = Array.from({ length: 5 }, (_, i) => ({
-      id: products.value.length + i + 1,
-      name: `商品 ${products.value.length + i + 1}`,
-      price: (Math.random() * 100).toFixed(2),
-      quantity: 1,
-      selected: false,
-    }));
-    products.value.push(...nextProducts);
-    loading.value = false;
+    // 计算目标显示数量，确保是3的倍数
+    const targetCount = calculateDisplayCount(pageData.value.length, increment);
 
-    // 模拟数据到达上限
-    if (products.value.length >= 20) {
+    // 如果没有更多数据了，就直接显示所有数据
+    if (targetCount >= pageData.value.length) {
+      products.value = pageData.value;
       noMore.value = true;
+    } else {
+      products.value = pageData.value.slice(0, targetCount);
     }
+
+    loading.value = false;
   }, 1000);
 };
 
-const goToDetail = (id) => {
-  console.log("go to detail", id);
-  router.push({ name: "detail", params: { id } });
+const goToDetail = (name) => {
+  console.log("go to detail", name);
+  router.push({ name: "detail", params: { name } });
 };
 
 onMounted(() => {
   console.log("get shop list...");
   getShopList().then((res) => {
-    console.log("shop list", res);
+    const processedData = res.data.map((item) => ({
+      ...item,
+      image: getFullImageUrl(item.image),
+      quantity: 1,
+      selected: false,
+    }));
 
-    // products.value = res.data.data;
+    const copyProcessedData = [
+      ...processedData,
+      ...processedData,
+      ...processedData,
+    ];
+    pageData.value = copyProcessedData;
+
+    // 初始显示约10个（向上取整到3的倍数）
+    const initialCount = calculateDisplayCount(pageData.value.length, 10);
+    products.value = pageData.value.slice(0, initialCount);
+
+    // 更新是否还有更多数据
+    noMore.value = products.value.length >= pageData.value.length;
   });
 });
 </script>
@@ -96,18 +137,14 @@ onMounted(() => {
           class="shop-list"
           v-for="product in products"
           :key="product.id"
-          @click="goToDetail(product.id)"
+          @click="goToDetail(product.name)"
         >
           <div class="card">
             <label class="checkbox-container">
               <input type="checkbox" v-model="product.selected" />
               <span class="checkmark"></span>
             </label>
-            <img
-              src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
-              alt="Product Image"
-              class="card-image"
-            />
+            <img :src="product.image" alt="Product Image" class="card-image" />
             <h3 class="card-title">{{ product.name }}</h3>
             <p class="card-price">${{ product.price }}</p>
           </div>
