@@ -26,7 +26,6 @@ const ITEMS_PER_ROW = 3;
 
 const calculateDisplayCount = (total, increment) => {
   const newCount = Math.min(total, products.value.length + increment);
-  // 向上取整到最近的 ITEMS_PER_ROW 的倍数
   return Math.ceil(newCount / ITEMS_PER_ROW) * ITEMS_PER_ROW;
 };
 
@@ -48,7 +47,6 @@ watch(
   () => props.products,
   (newProducts) => {
     if (newProducts && newProducts.length > 0) {
-      // 有搜索结果时，使用搜索结果
       const processedData = newProducts.map((item) => ({
         ...item,
         image: getFullImageUrl(item.image),
@@ -57,8 +55,8 @@ watch(
       }));
 
       pageData.value = processedData;
-      products.value = pageData.value; // 直接显示所有搜索结果
-      noMore.value = true; // 搜索结果不需要加载更多
+      products.value = pageData.value;
+      noMore.value = true;
     }
   }
 );
@@ -73,12 +71,10 @@ const load = () => {
 
   setTimeout(() => {
     const currentCount = products.value.length;
-    let increment = 5; // 每次增加5个
+    let increment = 5;
 
-    // 计算目标显示数量，确保是3的倍数
     const targetCount = calculateDisplayCount(pageData.value.length, increment);
 
-    // 如果没有更多数据了，就直接显示所有数据
     if (targetCount >= pageData.value.length) {
       products.value = pageData.value;
       noMore.value = true;
@@ -112,11 +108,9 @@ onMounted(() => {
     ];
     pageData.value = copyProcessedData;
 
-    // 初始显示约10个（向上取整到3的倍数）
     const initialCount = calculateDisplayCount(pageData.value.length, 10);
     products.value = pageData.value.slice(0, initialCount);
 
-    // 更新是否还有更多数据
     noMore.value = products.value.length >= pageData.value.length;
   });
 });

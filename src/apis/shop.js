@@ -18,12 +18,10 @@ export function searchShopList(params) {
 }
 
 // 获取商品详情
-export function getShopDetail() {
+export function getShopDetail(params) {
     return httpInstance({
         url: '/sushi/detail',
         method: 'get',
-        params: {
-            sushi_name: '龙虾寿司'
-        }
+        params
     })
 }

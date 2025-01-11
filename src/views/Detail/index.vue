@@ -28,11 +28,12 @@ const article = ref({
 });
 // 接收参数
 const route = useRoute();
+const name = ref(route.params.name);
 const contentment = ref([]);
 // 发送请求接收数据
 onMounted: {
   //接收参数
-  getShopDetail().then((res) => {
+  getShopDetail({ sushi_name: name.value }).then((res) => {
     console.log("获取文章信息", res.data);
     article.value = res.data;
   });
