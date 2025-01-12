@@ -42,7 +42,7 @@ const comments = [
   },
 ];
 
-// 控制弹窗显示
+// 控制弹窗
 const showCommentDialog = ref(false);
 // 评分
 const rating = ref(0);
@@ -51,7 +51,7 @@ const commentContent = ref("");
 
 const currentWork = {
   title: "宝可梦",
-  image: "/api/placeholder/158/158", // 使用占位图,也可以替换成实际的图片URL
+  image: "/api/placeholder/158/158", // 占位图
 };
 
 const openCommentDialog = () => {
@@ -67,7 +67,7 @@ const closeCommentDialog = () => {
 
 // 提交评论
 const submitComment = () => {
-  // 这里添加提交评论的逻辑
+  // 评论逻辑
   console.log({
     rating: rating.value,
     content: commentContent.value,
@@ -83,7 +83,6 @@ const setRating = (value) => {
 
 <template>
   <div class="card">
-    <!-- 评论输入区域 -->
     <div class="con write-comment">
       <div class="title">
         点评
@@ -301,10 +300,6 @@ const setRating = (value) => {
 }
 
 .dialog-header {
-  /* display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px; */
   position: absolute;
   right: 10px;
   top: 10px;

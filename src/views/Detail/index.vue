@@ -96,8 +96,12 @@ onMounted: {
     // }
   ];
 
+  let username = localStorage.getItem("user_name");
+
   // 获取点赞和收藏、评论状态
-  getShopInteraction().then((res) => {
+  getShopInteraction(name.value, username).then((res) => {
+    // 获取用户名
+
     console.log("获取点赞和收藏、评论状态", res);
     // isLiked.value = res.data.isLiked;
     // isFavorited.value = res.data.isFavorited;

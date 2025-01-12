@@ -4,6 +4,7 @@ import Auth from '@/views/Auth/index.vue'
 import Layout from '@/views/Layout/index.vue'
 import Payment from '@/views/Payment/index.vue'
 import Detail from '@/views/Detail/index.vue'
+import { getLoginStatus } from "@/apis/user";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,17 +39,26 @@ const router = createRouter({
   ],
 })
 
-// router.beforeEach((to, from, next) => {
-//   // localStorage.removeItem('use-auth');
-//   console.log("localStroage token: ", localStorage.getItem('use-auth'));
+router.beforeEach(async (to, from, next) => {
+  const user_name = localStorage.getItem('user_name');
+  let isavailable = false;
 
-//   if (to.name === 'auth' && localStorage.getItem('use-auth')) {
-//     next('/')
-//   } else if (to.name !== 'auth' && !localStorage.getItem('use-auth')) {
-//     next('/auth')
-//   } else {
-//     next()
-//   }
-// })
+  // 判断用户是否存在
+  await getLoginStatus(user_name).then(res => {
+    if (res.data.exists) {
+      isavailable = true;
+    }
+  }).catch(err => {
+    console.log(err);
+  })
+
+  if (to.name === 'auth' && isavailable) {
+    next('/')
+  } else if (to.name !== 'auth' && !isavailable) {
+    next('/auth')
+  } else {
+    next()
+  }
+})
 
 export default router

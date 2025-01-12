@@ -1,12 +1,20 @@
 <script setup>
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
+// 获取用户名
+const username = ref();
+
 const handleLogout = () => {
   console.log("logout");
-  localStorage.removeItem("use-auth");
+  localStorage.removeItem("user_name");
   router.push("/auth");
 };
+
+onMounted(() => {
+  username.value = localStorage.getItem("user_name");
+});
 </script>
 
 <template>
@@ -18,7 +26,7 @@ const handleLogout = () => {
           <div class="user-info">
             <li>
               <a href="javascript:;"
-                ><i class="iconfont icon-user"></i>周杰伦</a
+                ><i class="iconfont icon-user"></i>{{ username }}</a
               >
             </li>
             <li>

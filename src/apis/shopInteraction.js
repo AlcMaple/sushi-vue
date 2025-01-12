@@ -1,5 +1,6 @@
 import httpInstance from "@/utils/http";
 
+// 获取商品互动信息
 export function getShopInteraction(sushiName, username) {
     return httpInstance({
         url: `/sushi/actions/status/${sushiName}`,

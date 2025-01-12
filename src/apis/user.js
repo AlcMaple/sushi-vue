@@ -17,3 +17,14 @@ export function login(data) {
         data
     })
 }
+
+// 获取用户登录状态
+export function getLoginStatus(username) {
+    return httpInstance({
+        url: '/auth/status',
+        method: 'post',
+        data: {
+            username: username
+        }
+    })
+}

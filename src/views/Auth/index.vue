@@ -47,7 +47,7 @@ const LoginSubmit = (event) => {
   login({ username, password })
     .then((response) => {
       ElMessage.success("Login successful");
-      localStorage.setItem("use-auth", true);
+      localStorage.setItem("user_name", response.data.username);
       router.push("/");
     })
     .catch((error) => {
