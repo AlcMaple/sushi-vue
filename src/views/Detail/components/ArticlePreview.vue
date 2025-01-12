@@ -6,7 +6,7 @@ const props = defineProps({
   content: String,
 });
 
-console.log(props.content);
+// console.log(props.content);
 </script>
 
 <template>

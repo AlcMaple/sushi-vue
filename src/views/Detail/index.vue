@@ -19,14 +19,54 @@ import { ElMessage } from "element-plus";
 const article = ref({});
 // 接收参数
 const route = useRoute();
-const name = ref(route.query.name);
-const image = ref(route.query.image);
-const contentment = ref([]);
+const name = ref("");
+const image = ref("");
+const contentment = ref([
+  {
+    id: 1,
+    username: "暮辞雨下",
+    avatar: "/api/placeholder/40/40",
+    content:
+      "随着时间的推移，宝可梦系列越来越多了，但在我心中，无印仍是永恒不变的经典",
+    date: "2022年2月19日",
+    likes: 264,
+    isFemale: true,
+  },
+  {
+    id: 2,
+    username: "九阳炎",
+    avatar: "/api/placeholder/40/40",
+    content: "童年回忆",
+    date: "1月8日",
+    likes: 0,
+    isFemale: false,
+  },
+  {
+    id: 3,
+    username: "Old_Yan",
+    avatar: "/api/placeholder/40/40",
+    content: "666",
+    date: "1月2日",
+    likes: 0,
+    isFemale: false,
+  },
+  {
+    id: 4,
+    username: "isK耶",
+    avatar: "/api/placeholder/40/40",
+    content: "为了童年",
+    date: "2024年12月30日",
+    likes: 0,
+    isFemale: true,
+  },
+]);
 // 发送请求接收数据
 onMounted: {
+  name.value = route.query.name;
+  image.value = route.query.image;
   //接收参数
   getShopDetail({ sushi_name: name.value }).then((res) => {
-    console.log("获取文章信息", res.data);
+    // console.log("获取文章信息", res.data);
     article.value = res.data;
   });
 
@@ -35,7 +75,7 @@ onMounted: {
   // 获取点赞和收藏、评论状态
   getShopInteraction(name.value, username).then((res) => {
     // 获取用户名
-    console.log("获取点赞和收藏、评论状态", res);
+    // console.log("获取点赞和收藏、评论状态", res);
     isLiked.value = res.user_status.has_liked;
     isFavorited.value = res.user_status.has_favorited;
   });
@@ -46,7 +86,8 @@ onMounted: {
     // contentment.value = res.data;
   });
 
-  // console.log("image", image.value);
+  console.log("name", name.value);
+  console.log("image", image.value);
 }
 
 // 设置点赞和收藏的状态

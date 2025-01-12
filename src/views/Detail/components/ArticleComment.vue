@@ -1,46 +1,51 @@
 <!-- 展示评论 -->
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, onMounted, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 // 静态评论数据
-const comments = [
-  {
-    id: 1,
-    username: "暮辞雨下",
-    avatar: "/api/placeholder/40/40",
-    content:
-      "随着时间的推移，宝可梦系列越来越多了，但在我心中，无印仍是永恒不变的经典",
-    date: "2022年2月19日",
-    likes: 264,
-    isFemale: true,
-  },
-  {
-    id: 2,
-    username: "九阳炎",
-    avatar: "/api/placeholder/40/40",
-    content: "童年回忆",
-    date: "1月8日",
-    likes: 0,
-    isFemale: false,
-  },
-  {
-    id: 3,
-    username: "Old_Yan",
-    avatar: "/api/placeholder/40/40",
-    content: "666",
-    date: "1月2日",
-    likes: 0,
-    isFemale: false,
-  },
-  {
-    id: 4,
-    username: "isK耶",
-    avatar: "/api/placeholder/40/40",
-    content: "为了童年",
-    date: "2024年12月30日",
-    likes: 0,
-    isFemale: true,
-  },
-];
+// const comments = [
+//   {
+//     id: 1,
+//     username: "暮辞雨下",
+//     avatar: "/api/placeholder/40/40",
+//     content:
+//       "随着时间的推移，宝可梦系列越来越多了，但在我心中，无印仍是永恒不变的经典",
+//     date: "2022年2月19日",
+//     likes: 264,
+//     isFemale: true,
+//   },
+//   {
+//     id: 2,
+//     username: "九阳炎",
+//     avatar: "/api/placeholder/40/40",
+//     content: "童年回忆",
+//     date: "1月8日",
+//     likes: 0,
+//     isFemale: false,
+//   },
+//   {
+//     id: 3,
+//     username: "Old_Yan",
+//     avatar: "/api/placeholder/40/40",
+//     content: "666",
+//     date: "1月2日",
+//     likes: 0,
+//     isFemale: false,
+//   },
+//   {
+//     id: 4,
+//     username: "isK耶",
+//     avatar: "/api/placeholder/40/40",
+//     content: "为了童年",
+//     date: "2024年12月30日",
+//     likes: 0,
+//     isFemale: true,
+//   },
+// ];
+
+const commentList = ref([]);
 
 // 控制弹窗
 const showCommentDialog = ref(false);
@@ -53,10 +58,12 @@ const props = defineProps({
   name: {
     type: String,
     default: "",
+    required: true,
   },
   image: {
     type: String,
     default: "",
+    required: true,
   },
   contentment: {
     type: Array,
@@ -64,10 +71,10 @@ const props = defineProps({
   },
 });
 
-const currentWork = {
-  title: props.name,
-  image: props.image,
-};
+const currentWork = ref({
+  title: "",
+  image: "",
+});
 
 const openCommentDialog = () => {
   showCommentDialog.value = true;
@@ -94,6 +101,13 @@ const submitComment = () => {
 const setRating = (value) => {
   rating.value = value;
 };
+
+onMounted(() => {
+  currentWork.value.title = route.query.name || "";
+  currentWork.value.image = route.query.image || "";
+  commentList.value = props.contentment;
+  console.log("coommentList", props.contentment);
+});
 </script>
 
 <template>
@@ -107,7 +121,7 @@ const setRating = (value) => {
 
     <!-- 评论列表 -->
     <div class="comment-list">
-      <div v-for="comment in comments" :key="comment.id" class="con">
+      <div v-for="comment in commentList" :key="comment.id" class="con">
         <div class="comment-content">
           <!-- <img :src="comment.avatar" :alt="comment.username" class="avatar" /> -->
           <div class="comment-main">
