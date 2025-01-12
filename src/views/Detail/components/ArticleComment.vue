@@ -1,6 +1,6 @@
 <!-- 展示评论 -->
 <script setup>
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 // 静态评论数据
 const comments = [
   {
@@ -49,9 +49,24 @@ const rating = ref(0);
 // 评论内容
 const commentContent = ref("");
 
+const props = defineProps({
+  name: {
+    type: String,
+    default: "",
+  },
+  image: {
+    type: String,
+    default: "",
+  },
+  contentment: {
+    type: Array,
+    default: () => [],
+  },
+});
+
 const currentWork = {
-  title: "宝可梦",
-  image: "/api/placeholder/158/158", // 占位图
+  title: props.name,
+  image: props.image,
 };
 
 const openCommentDialog = () => {

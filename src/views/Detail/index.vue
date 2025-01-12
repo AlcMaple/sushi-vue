@@ -11,6 +11,7 @@ import {
   cancelLikeShopInteraction,
   collectShopInteraction,
   cancelCollectShopInteraction,
+  getShopComments,
 } from "@/apis/shopInteraction";
 import { ElMessage } from "element-plus";
 
@@ -18,7 +19,8 @@ import { ElMessage } from "element-plus";
 const article = ref({});
 // 接收参数
 const route = useRoute();
-const name = ref(route.params.name);
+const name = ref(route.query.name);
+const image = ref(route.query.image);
 const contentment = ref([]);
 // 发送请求接收数据
 onMounted: {
@@ -33,11 +35,18 @@ onMounted: {
   // 获取点赞和收藏、评论状态
   getShopInteraction(name.value, username).then((res) => {
     // 获取用户名
-
     console.log("获取点赞和收藏、评论状态", res);
     isLiked.value = res.user_status.has_liked;
     isFavorited.value = res.user_status.has_favorited;
   });
+
+  // 获取评论
+  getShopComments(name.value).then((res) => {
+    console.log("获取评论", res);
+    // contentment.value = res.data;
+  });
+
+  // console.log("image", image.value);
 }
 
 // 设置点赞和收藏的状态
@@ -121,7 +130,11 @@ const toggleFavorite = async () => {
       <ArticlePreview :content="article.content" />
     </el-card>
     <!-- 评论区 传入评论参数 -->
-    <ArticleComment />
+    <ArticleComment
+      :image="image.value"
+      :name="name.value"
+      :contentment="contentment.value"
+    />
 
     <!-- 点赞和收藏按钮区域 -->
     <div class="raise-container">

@@ -58,3 +58,11 @@ export function cancelCollectShopInteraction(sushiName, username) {
         }
     })
 }
+
+// 获取寿司评论
+export function getShopComments(sushiName) {
+    return httpInstance({
+        url: `/sushi/actions/comments/${sushiName}`,
+        method: 'get'
+    })
+}

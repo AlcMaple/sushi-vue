@@ -86,9 +86,12 @@ const load = () => {
   }, 1000);
 };
 
-const goToDetail = (name) => {
-  console.log("go to detail", name);
-  router.push({ name: "detail", params: { name } });
+const goToDetail = (name, image) => {
+  console.log("go to detail", name, image);
+  router.push({
+    name: "detail",
+    query: { name, image },
+  });
 };
 
 onMounted(() => {
@@ -131,7 +134,7 @@ onMounted(() => {
           class="shop-list"
           v-for="product in products"
           :key="product.id"
-          @click="goToDetail(product.name)"
+          @click="goToDetail(product.name, product.image)"
         >
           <div class="card">
             <label class="checkbox-container" @click.stop>
