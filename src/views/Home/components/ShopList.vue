@@ -134,7 +134,7 @@ onMounted(() => {
           @click="goToDetail(product.name)"
         >
           <div class="card">
-            <label class="checkbox-container">
+            <label class="checkbox-container" @click.stop>
               <input type="checkbox" v-model="product.selected" />
               <span class="checkmark"></span>
             </label>
