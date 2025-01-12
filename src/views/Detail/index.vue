@@ -3,30 +3,19 @@
 import { useRoute } from "vue-router";
 import ArticleComment from "./components/ArticleComment.vue";
 import ArticlePreview from "./components/ArticlePreview.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { getShopDetail } from "@/apis/shop";
-import { getShopInteraction } from "@/apis/shopInteraction";
+import {
+  getShopInteraction,
+  likeShopInteraction,
+  cancelLikeShopInteraction,
+  collectShopInteraction,
+  cancelCollectShopInteraction,
+} from "@/apis/shopInteraction";
+import { ElMessage } from "element-plus";
 
 // 模拟文章数据
-const article = ref({
-  content:
-    "# Linux\n" +
-    "***vue :*** [vue3](https://cn.vuejs.org/)\n" +
-    "***CSDN :*** [CSDN官网](https://www.csdn.net/)\n" +
-    "***LeetCode :*** [力扣刷题](https://leetcode.cn/problems/)\n" +
-    "[linux](http://linux.vbird.org/linux_basic/)\n" +
-    "## 前端\n" +
-    "***vue :*** [vue3](https://cn.vuejs.org/)\n" +
-    "***CSDN :*** [CSDN官网](https://www.csdn.net/)\n" +
-    "***LeetCode :*** [力扣刷题](https://leetcode.cn/problems/)\n" +
-    "## 后端\n" +
-    "***Java :*** [Java教程](https://www.runoob.com/java/java-tutorial.html)\n" +
-    "***Spring :*** [Spring教程](https://spring.io/guides)\n" +
-    "***SpringBoot :*** [SpringBoot教程](https://spring.io/projects/spring-boot)\n" +
-    "***SpringCloud :*** [SpringCloud教程](https://spring.io/projects/spring-cloud)\n",
-  // // 开启文章评论
-  // commentabled: true,
-});
+const article = ref({});
 // 接收参数
 const route = useRoute();
 const name = ref(route.params.name);
@@ -38,63 +27,6 @@ onMounted: {
     console.log("获取文章信息", res.data);
     article.value = res.data;
   });
-  // 接收文章评论
-  // console.log("这些哪里？", route.query.aid);
-  //   getPublicContentment(route.query.aid).then((res) => {
-  //     // console.log("文章评论", res);
-  //     contentment.value = res.data;
-
-  //     // 评论头像处理
-  //     for (let i = 0; i < contentment.value.length; i++) {
-  //       const img = `data:image/jpg;base64,${res.data[i].uavator}`;
-  //       contentment.value[i].uavator = img;
-
-  //       // 评论子头像处理
-  //       for (let j = 0; j < contentment.value[i].subReply.length; j++) {
-  //         const img2 = `data:image/jpg;base64,${res.data[i].subReply[j].uavator}`;
-  //         contentment.value[i].subReply[j].uavator = img2;
-  //       }
-  //     }
-  //   });
-
-  // 模拟评论数据
-  contentment.value = [
-    //     {
-    //     uid: 1,
-    //     nickname: '我会用vue3',
-    //     createTime: '2023-6-3 19:22',
-    //     content: '我的 uid 是 \'1\' 😎与模拟 ( 这条评论我发的 ) 的一样,因此我会有 -删除- 按钮🐔',
-    //     uavator: 'https://img0.baidu.com/it/u=1091210682,206783907&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1684602000&t=1813754cb45a25a646263c4b3a711514',
-    //     // 子评论
-    //     subReply: [{
-    //         uid: 2,
-    //         nickname: '我在学pinia',
-    //         createTime: '2023-6-4 12:32',
-    //         content: '我的 uid 是 \'2\' 我来玩了🥳',
-    //         uavator: 'src/assets/imgs/uid2.png'
-    //     },
-    //     {
-    //         uid: 1,
-    //         nickname: '我会用vue3',
-    //         createTime: '2023-6-4 12:39',
-    //         content: '我的 uid 是 \'1\' 欢迎欢迎 泰库辣🥳',
-    //         uavator: 'https://img0.baidu.com/it/u=1091210682,206783907&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1684602000&t=1813754cb45a25a646263c4b3a711514'
-    //     }]
-    // }, {
-    //     uid: 2,
-    //     nickname: '我在学pinia',
-    //     createTime: '2023-6-3 22:32',
-    //     content: '我的 uid 是 \'2\' 我没有 -删除- 按钮🐔 因为上面的评论不是我发的',
-    //     uavator: 'src/assets/imgs/uid2.png',
-    // },
-    // {
-    //     uid: 2,
-    //     nickname: '我在学pinia',
-    //     createTime: '2023-6-3 22:32',
-    //     content: '忘记告诉你们了！因为是模拟数据所以这些按钮也就成为摆设了😘',
-    //     uavator: 'src/assets/imgs/uid2.png',
-    // }
-  ];
 
   let username = localStorage.getItem("user_name");
 
@@ -103,8 +35,8 @@ onMounted: {
     // 获取用户名
 
     console.log("获取点赞和收藏、评论状态", res);
-    // isLiked.value = res.data.isLiked;
-    // isFavorited.value = res.data.isFavorited;
+    isLiked.value = res.user_status.has_liked;
+    isFavorited.value = res.user_status.has_favorited;
   });
 }
 
@@ -112,13 +44,65 @@ onMounted: {
 const isLiked = ref(false);
 const isFavorited = ref(false);
 
-// 点击处理函数
-const toggleLike = () => {
-  isLiked.value = !isLiked.value;
+const toggleLike = async () => {
+  try {
+    const username = localStorage.getItem("user_name");
+    if (!username) {
+      ElMessage.warning("请先登录");
+      return;
+    }
+    if (isLiked.value) {
+      const res = await cancelLikeShopInteraction(name.value, username);
+      // console.log("res", res);
+
+      if (res.message === "取消点赞成功") {
+        console.log("test");
+
+        isLiked.value = false;
+        ElMessage.success("取消点赞成功");
+      }
+    } else {
+      const res = await likeShopInteraction(name.value, username);
+      console.log("res", res);
+
+      if (res.message === "点赞成功") {
+        isLiked.value = true;
+        ElMessage.success("点赞成功");
+      }
+    }
+  } catch (error) {
+    console.error("点赞操作失败:", error);
+    ElMessage.error("操作失败，请稍后重试");
+  }
 };
 
-const toggleFavorite = () => {
-  isFavorited.value = !isFavorited.value;
+const toggleFavorite = async () => {
+  try {
+    const username = localStorage.getItem("user_name");
+    if (!username) {
+      ElMessage.warning("请先登录");
+      return;
+    }
+
+    if (isFavorited.value) {
+      const res = await cancelCollectShopInteraction(name.value, username);
+      console.log("Res", res);
+
+      if (res.message === "取消收藏成功") {
+        isFavorited.value = false;
+        ElMessage.success("取消收藏成功");
+      }
+    } else {
+      const res = await collectShopInteraction(name.value, username);
+      if (res.message === "收藏成功") {
+        isFavorited.value = true;
+        ElMessage.success("收藏成功");
+      }
+    }
+  } catch (error) {
+    console.error("收藏操作失败:", error);
+    ElMessage.error("操作失败，请稍后重试");
+  }
 };
 </script>
 
