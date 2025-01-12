@@ -5,6 +5,7 @@ import ArticleComment from "./components/ArticleComment.vue";
 import ArticlePreview from "./components/ArticlePreview.vue";
 import { onMounted, ref } from "vue";
 import { getShopDetail } from "@/apis/shop";
+import { getShopInteraction } from "@/apis/shopInteraction";
 
 // 模拟文章数据
 const article = ref({
@@ -94,6 +95,13 @@ onMounted: {
     //     uavator: 'src/assets/imgs/uid2.png',
     // }
   ];
+
+  // 获取点赞和收藏、评论状态
+  getShopInteraction().then((res) => {
+    console.log("获取点赞和收藏、评论状态", res);
+    // isLiked.value = res.data.isLiked;
+    // isFavorited.value = res.data.isFavorited;
+  });
 }
 
 // 设置点赞和收藏的状态
@@ -125,11 +133,7 @@ const toggleFavorite = () => {
       <ArticlePreview :content="article.content" />
     </el-card>
     <!-- 评论区 传入评论参数 -->
-    <ArticleComment
-      v-if="article.commentabled"
-      :contentments="contentment"
-      :aid="article.aid"
-    />
+    <ArticleComment />
 
     <!-- 点赞和收藏按钮区域 -->
     <div class="raise-container">
