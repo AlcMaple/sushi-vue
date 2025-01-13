@@ -1,49 +1,20 @@
 <!-- 展示评论 -->
 <script setup>
-import { ref, defineProps, onMounted, watch, watchEffect } from "vue";
+import {
+  ref,
+  defineProps,
+  onMounted,
+  watch,
+  watchEffect,
+  defineEmits,
+} from "vue";
 import { useRoute } from "vue-router";
+import { postShopComment } from "@/apis/shopInteraction";
+import { async } from "@kangc/v-md-editor";
+import { ElMessage } from "element-plus";
 
 const route = useRoute();
-// 静态评论数据
-// const comments = [
-//   {
-//     id: 1,
-//     username: "暮辞雨下",
-//     avatar: "/api/placeholder/40/40",
-//     content:
-//       "随着时间的推移，宝可梦系列越来越多了，但在我心中，无印仍是永恒不变的经典",
-//     date: "2022年2月19日",
-//     likes: 264,
-//     isFemale: true,
-//   },
-//   {
-//     id: 2,
-//     username: "九阳炎",
-//     avatar: "/api/placeholder/40/40",
-//     content: "童年回忆",
-//     date: "1月8日",
-//     likes: 0,
-//     isFemale: false,
-//   },
-//   {
-//     id: 3,
-//     username: "Old_Yan",
-//     avatar: "/api/placeholder/40/40",
-//     content: "666",
-//     date: "1月2日",
-//     likes: 0,
-//     isFemale: false,
-//   },
-//   {
-//     id: 4,
-//     username: "isK耶",
-//     avatar: "/api/placeholder/40/40",
-//     content: "为了童年",
-//     date: "2024年12月30日",
-//     likes: 0,
-//     isFemale: true,
-//   },
-// ];
+const emit = defineEmits();
 
 const commentList = ref([]);
 
@@ -53,6 +24,7 @@ const showCommentDialog = ref(false);
 const rating = ref(0);
 // 评论内容
 const commentContent = ref("");
+const username = localStorage.getItem("user_name");
 
 const props = defineProps({
   name: {
@@ -88,13 +60,23 @@ const closeCommentDialog = () => {
 };
 
 // 提交评论
-const submitComment = () => {
-  // 评论逻辑
-  console.log({
-    rating: rating.value,
-    content: commentContent.value,
-  });
-  closeCommentDialog();
+const submitComment = async () => {
+  const result = await postShopComment(
+    currentWork.value.title,
+    username,
+    commentContent.value,
+    rating.value
+  );
+
+  console.log(result, "result");
+  if (result.message == "评论成功") {
+    ElMessage.success("评论成功");
+    // 告诉父组件，评论数据要更新
+    emit("updateCommentList");
+    closeCommentDialog();
+  } else {
+    ElMessage.error("评论失败");
+  }
 };
 
 // 设置评分
@@ -130,7 +112,9 @@ onMounted(() => {
                 {{ comment.username }}
               </span>
               <div class="stars">
-                <span v-for="n in 5" :key="n" class="star">★</span>
+                <span v-for="n in comment.score" :key="n" class="star active"
+                  >★</span
+                >
               </div>
               <!-- <span class="date">{{ comment.date }}</span> -->
             </div>
@@ -195,8 +179,8 @@ onMounted(() => {
           <button
             class="submit-btn"
             @click="submitComment"
-            :disabled="!rating"
-            :class="{ 'submit-btn-active': rating }"
+            :disabled="!rating || !commentContent"
+            :class="{ 'submit-btn-active': rating && commentContent }"
           >
             发表短评
           </button>
@@ -383,7 +367,7 @@ onMounted(() => {
 .star {
   font-size: 18px;
   color: #ddd;
-  cursor: pointer;
+  cursor: default;
 }
 
 .star.active {
@@ -399,6 +383,7 @@ onMounted(() => {
   resize: none;
   margin-bottom: 5px;
   font-size: 14px;
+  color: black;
 }
 
 .word-count {

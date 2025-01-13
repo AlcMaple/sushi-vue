@@ -22,44 +22,47 @@ const route = useRoute();
 const name = ref("");
 const image = ref("");
 const contentment = ref([
-  {
-    id: 1,
-    username: "暮辞雨下",
-    avatar: "/api/placeholder/40/40",
-    content:
-      "随着时间的推移，宝可梦系列越来越多了，但在我心中，无印仍是永恒不变的经典",
-    date: "2022年2月19日",
-    likes: 264,
-    isFemale: true,
-  },
-  {
-    id: 2,
-    username: "九阳炎",
-    avatar: "/api/placeholder/40/40",
-    content: "童年回忆",
-    date: "1月8日",
-    likes: 0,
-    isFemale: false,
-  },
-  {
-    id: 3,
-    username: "Old_Yan",
-    avatar: "/api/placeholder/40/40",
-    content: "666",
-    date: "1月2日",
-    likes: 0,
-    isFemale: false,
-  },
-  {
-    id: 4,
-    username: "isK耶",
-    avatar: "/api/placeholder/40/40",
-    content: "为了童年",
-    date: "2024年12月30日",
-    likes: 0,
-    isFemale: true,
-  },
+  // {
+  //   id: 1,
+  //   username: "暮辞雨下",
+  //   avatar: "/api/placeholder/40/40",
+  //   content:
+  //     "随着时间的推移，宝可梦系列越来越多了，但在我心中，无印仍是永恒不变的经典",
+  //   date: "2022年2月19日",
+  //   likes: 264,
+  //   isFemale: true,
+  // },
+  // {
+  //   id: 2,
+  //   username: "九阳炎",
+  //   avatar: "/api/placeholder/40/40",
+  //   content: "童年回忆",
+  //   date: "1月8日",
+  //   likes: 0,
+  //   isFemale: false,
+  // },
+  // {
+  //   id: 3,
+  //   username: "Old_Yan",
+  //   avatar: "/api/placeholder/40/40",
+  //   content: "666",
+  //   date: "1月2日",
+  //   likes: 0,
+  //   isFemale: false,
+  // },
+  // {
+  //   id: 4,
+  //   username: "isK耶",
+  //   avatar: "/api/placeholder/40/40",
+  //   content: "为了童年",
+  //   date: "2024年12月30日",
+  //   likes: 0,
+  //   isFemale: true,
+  // },
 ]);
+
+const isLoading = ref(true);
+
 // 发送请求接收数据
 onMounted: {
   name.value = route.query.name;
@@ -83,7 +86,8 @@ onMounted: {
   // 获取评论
   getShopComments(name.value).then((res) => {
     console.log("获取评论", res);
-    // contentment.value = res.data;
+    contentment.value = res.comments;
+    isLoading.value = false;
   });
 
   console.log("name", name.value);
@@ -154,6 +158,17 @@ const toggleFavorite = async () => {
     ElMessage.error("操作失败，请稍后重试");
   }
 };
+
+// 监听子组件的更新
+const updateCommentList = () => {
+  // 更新评论列表
+  isLoading.value = true;
+  getShopComments(name.value).then((res) => {
+    console.log("获取评论", res);
+    contentment.value = res.comments;
+    isLoading.value = false;
+  });
+};
 </script>
 
 <template>
@@ -172,9 +187,11 @@ const toggleFavorite = async () => {
     </el-card>
     <!-- 评论区 传入评论参数 -->
     <ArticleComment
+      v-if="!isLoading"
       :image="image.value"
       :name="name.value"
-      :contentment="contentment.value"
+      :contentment="contentment"
+      @updateCommentList="updateCommentList"
     />
 
     <!-- 点赞和收藏按钮区域 -->

@@ -4,6 +4,7 @@ import Auth from '@/views/Auth/index.vue'
 import Layout from '@/views/Layout/index.vue'
 import Payment from '@/views/Payment/index.vue'
 import Detail from '@/views/Detail/index.vue'
+import User from '@/views/User/index.vue'
 import { getLoginStatus } from "@/apis/user";
 
 const router = createRouter({
@@ -24,6 +25,11 @@ const router = createRouter({
           name: 'detail',
           component: Detail,
         },
+        {
+          path: 'user',
+          name: 'user',
+          component: User,
+        }
       ]
     },
     {

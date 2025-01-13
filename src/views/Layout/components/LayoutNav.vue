@@ -15,21 +15,26 @@ const handleLogout = () => {
 onMounted(() => {
   username.value = localStorage.getItem("user_name");
 });
+
+const handleUsernameClick = () => {
+  router.push("/user");
+};
 </script>
 
 <template>
   <nav class="app-topnav">
     <div class="app-container">
       <ul class="app-topnav-list">
-        <div class="logo">logo</div>
+        <div class="logo" @click="router.push('/')">logo</div>
         <template v-if="true">
           <div class="user-info">
-            <li>
-              <a href="javascript:;"
-                ><i class="iconfont icon-user"></i>{{ username }}</a
-              >
+            <li class="username-item">
+              <i class="iconfont icon-user"></i>
+              <span class="username-link" @click="handleUsernameClick">
+                {{ username }}
+              </span>
             </li>
-            <li>
+            <li class="logout-item">
               <el-popconfirm
                 title="确认退出吗?"
                 confirm-button-text="确认"
@@ -51,7 +56,6 @@ onMounted(() => {
   </nav>
 </template>
 
-
 <style scoped lang="scss">
 .app-topnav {
   background: #333;
@@ -60,29 +64,48 @@ onMounted(() => {
     height: 53px;
     justify-content: space-between;
     align-items: center;
+
     .logo {
       padding: 0 15px;
       color: #cdcdcd;
+      cursor: pointer;
     }
+
     .user-info {
       display: flex;
-    }
-    li {
-      a {
+      align-items: center;
+
+      .username-item {
+        display: flex;
+        align-items: center;
         padding: 0 15px;
         color: #cdcdcd;
-        line-height: 1;
-        display: inline-block;
 
         i {
           font-size: 14px;
           margin-right: 2px;
         }
+
+        .username-link {
+          cursor: pointer;
+          &:hover {
+            color: #fff;
+            transition: color 0.2s;
+          }
+        }
       }
 
-      ~ li {
+      .logout-item {
         a {
+          padding: 0 15px;
+          color: #cdcdcd;
+          line-height: 1;
           border-left: 2px solid #666;
+
+          &:hover {
+            color: #fff;
+            transition: color 0.2s;
+          }
         }
       }
     }

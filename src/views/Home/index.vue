@@ -13,14 +13,6 @@ const updateSelectedItems = (items) => {
 
 const products = ref([]);
 
-// onMounted(() => {
-//   getShopList().then((res) => {
-//     console.log("shop list", res);
-
-//     // products.value = res.data.data;
-//   });
-// });
-
 // 接收Search组件传递过来的数据
 const searchData = (data) => {
   console.log("searchData", data);

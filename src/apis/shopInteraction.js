@@ -1,6 +1,6 @@
 import httpInstance from "@/utils/http";
 
-// 获取商品互动信息
+// 获取用户对某商品互动信息
 export function getShopInteraction(sushiName, username) {
     return httpInstance({
         url: `/sushi/actions/status/${sushiName}`,
@@ -64,5 +64,35 @@ export function getShopComments(sushiName) {
     return httpInstance({
         url: `/sushi/actions/comments/${sushiName}`,
         method: 'get'
+    })
+}
+
+// 发表评论
+export function postShopComment(sushiName, username, content, score) {
+    return httpInstance({
+        url: `/sushi/actions/comment`,
+        method: 'post',
+        data: {
+            username: username,
+            sushi_name: sushiName,
+            content: content,
+            score: score
+        }
+    })
+}
+
+// 获取用户发表的评论
+export function getUserComments(username) {
+    return httpInstance({
+        url: `/sushi/actions/user/comments/${username}`,
+        method: 'get',
+    })
+}
+
+// 获取用户收藏过的寿司
+export function getUserFavorites(username) {
+    return httpInstance({
+        url: `/sushi/actions/user/favorites/${username}`,
+        method: 'get',
     })
 }
