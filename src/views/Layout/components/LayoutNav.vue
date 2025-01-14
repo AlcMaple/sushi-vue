@@ -25,7 +25,9 @@ const handleUsernameClick = () => {
   <nav class="app-topnav">
     <div class="app-container">
       <ul class="app-topnav-list">
-        <div class="logo" @click="router.push('/')">logo</div>
+        <div class="logo" @click="router.push('/')">
+          <img src="@/assets/logo.png" alt="" class="logo-img" />
+        </div>
         <template v-if="true">
           <div class="user-info">
             <li class="username-item">
@@ -58,7 +60,7 @@ const handleUsernameClick = () => {
 
 <style scoped lang="scss">
 .app-topnav {
-  background: #333;
+  background: #f0f0f0;
   ul {
     display: flex;
     height: 53px;
@@ -67,8 +69,13 @@ const handleUsernameClick = () => {
 
     .logo {
       padding: 0 15px;
-      color: #cdcdcd;
+      color: #fff;
       cursor: pointer;
+      .logo-img {
+        width: 140px;
+        margin-bottom: 15px;
+        color: #fff;
+      }
     }
 
     .user-info {
@@ -79,7 +86,7 @@ const handleUsernameClick = () => {
         display: flex;
         align-items: center;
         padding: 0 15px;
-        color: #cdcdcd;
+        color: #333;
 
         i {
           font-size: 14px;
@@ -89,7 +96,7 @@ const handleUsernameClick = () => {
         .username-link {
           cursor: pointer;
           &:hover {
-            color: #fff;
+            color: #666;
             transition: color 0.2s;
           }
         }
@@ -98,12 +105,12 @@ const handleUsernameClick = () => {
       .logout-item {
         a {
           padding: 0 15px;
-          color: #cdcdcd;
+          color: #333;
           line-height: 1;
-          border-left: 2px solid #666;
+          border-left: 2px solid #ddd;
 
           &:hover {
-            color: #fff;
+            color: #666;
             transition: color 0.2s;
           }
         }

@@ -97,29 +97,39 @@ onMounted(async () => {
       </div>
 
       <div v-if="activeTab === 'favorites'" class="tab-content">
-        <div v-for="item in favorites" :key="item.id" class="sushi-card">
-          <div class="sushi-info">
-            <h3 class="sushi-name">{{ item.name }}</h3>
-            <p class="sushi-rating">评分: {{ item.rating }}</p>
+        <div v-if="favorites.length > 0">
+          <div v-for="item in favorites" :key="item.id" class="sushi-card">
+            <div class="sushi-info">
+              <h3 class="sushi-name">{{ item.sushi_name }}</h3>
+              <p class="sushi-rating">评分: {{ item.score }}</p>
+            </div>
+            <div class="sushi-price">{{ item.price }}</div>
           </div>
-          <div class="sushi-price">{{ item.price }}</div>
+        </div>
+        <div v-else>
+          <p>该用户还没有收藏过任何寿司</p>
         </div>
       </div>
 
       <div v-if="activeTab === 'reviews'" class="tab-content">
-        <div v-for="review in reviews" :key="review.id" class="review-card">
-          <div class="review-header">
-            <div class="review-header-left">
-              <h3 class="sushi-name">{{ review.sushi_name }}</h3>
-              <div class="stars">
-                <span v-for="n in review.score" :key="n.id" class="star active"
-                  >★</span
-                >
+        <div v-if="reviews.length > 0">
+          <div v-for="review in reviews" :key="review.id" class="review-card">
+            <div class="review-header">
+              <div class="review-header-left">
+                <h3 class="sushi-name">{{ review.sushi_name }}</h3>
+                <div class="stars">
+                  <span v-for="n in review.score" :key="n" class="star active"
+                    >★</span
+                  >
+                </div>
               </div>
+              <span class="review-date">{{ review.created_at }}</span>
             </div>
-            <span class="review-date">{{ review.created_at }}</span>
+            <p class="review-content">{{ review.content }}</p>
           </div>
-          <p class="review-content">{{ review.content }}</p>
+        </div>
+        <div v-else>
+          <p>该用户还没有点评过任何寿司</p>
         </div>
       </div>
     </div>
