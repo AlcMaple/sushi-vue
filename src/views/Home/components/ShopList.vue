@@ -97,18 +97,24 @@ const goToDetail = (name, image) => {
 onMounted(() => {
   console.log("get shop list...");
   getShopList().then((res) => {
-    const processedData = res.data.map((item) => ({
+    const processedData = res.data.map((item,index) => ({
       ...item,
       image: getFullImageUrl(item.image),
       quantity: 1,
       selected: false,
+      uniqueId: `original-${index}`,
     }));
 
-    const copyProcessedData = [
-      ...processedData,
-      ...processedData,
-      ...processedData,
-    ];
+    const secondCopy = processedData.map((item, index) => ({
+      ...item,
+      uniqueId: `copy1-${index}`,
+    }));
+    const thirdCopy = processedData.map((item, index) => ({
+      ...item,
+      uniqueId: `copy2-${index}`,
+    }));
+
+    const copyProcessedData = [...processedData, ...secondCopy, ...thirdCopy];
     pageData.value = copyProcessedData;
 
     const initialCount = calculateDisplayCount(pageData.value.length, 10);
@@ -133,7 +139,7 @@ onMounted(() => {
         <div
           class="shop-list"
           v-for="product in products"
-          :key="product.id"
+          :key="product.uniqueId"
           @click="goToDetail(product.name, product.image)"
         >
           <div class="card">
