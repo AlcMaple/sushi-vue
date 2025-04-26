@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { getUserComments, getUserFavorites } from "@/apis/shopInteraction";
+import { useRouter } from "vue-router";
 
 const activeTab = ref("favorites");
 
@@ -24,6 +25,9 @@ const favorites = ref([
 
 const reviews = ref([]);
 
+// 获取路由
+const router = useRouter();
+
 onMounted(async () => {
   let name = localStorage.getItem("user_name");
   // 获取收藏的寿司
@@ -46,6 +50,14 @@ onMounted(async () => {
   console.log("reviews", reviews.value);
   console.log("stats", stats.value);
 });
+
+// 跳转寿司详情页
+const goToDetail = (name, image) => {
+  router.push({
+    name: "detail",
+    query: { name, image },
+  });
+};
 </script>
 
 <template>
@@ -98,7 +110,17 @@ onMounted(async () => {
 
       <div v-if="activeTab === 'favorites'" class="tab-content">
         <div v-if="favorites.length > 0">
-          <div v-for="item in favorites" :key="item.id" class="sushi-card">
+          <div
+            v-for="item in favorites"
+            :key="item.id"
+            class="sushi-card"
+            @click="
+              goToDetail(
+                item.sushi_name,
+                `/controllers/sushi_img/${item.sushi_name}.jpg`
+              )
+            "
+          >
             <div class="sushi-info">
               <h3 class="sushi-name">{{ item.sushi_name }}</h3>
               <p class="sushi-rating">评分: {{ item.score }}</p>
