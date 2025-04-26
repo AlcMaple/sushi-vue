@@ -7,6 +7,14 @@ import Detail from '@/views/Detail/index.vue'
 import User from '@/views/User/index.vue'
 import { getLoginStatus } from "@/apis/user";
 
+// 管理系统组件导入
+import AdminLogin from '@/views/AdminSystem/AdminLogin.vue'
+import AdminLayout from '@/views/AdminSystem/AdminLayout.vue'
+import AdminHome from '@/views/AdminSystem/AdminHome.vue'
+// import UserManage from '@/views/AdminSystem/UserManage.vue'
+// import SushiManage from '@/views/AdminSystem/SushiManage.vue'
+// import CommentManage from '@/views/AdminSystem/CommentManage.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,11 +49,56 @@ const router = createRouter({
       path: '/payment',
       name: 'payment',
       component: Payment,
+    },
+    // 管理端路由
+    {
+      path: '/admin-login',
+      name: 'adminLogin',
+      component: AdminLogin,
+    },
+    {
+      path: '/admin',
+      component: AdminLayout,
+      children: [
+        {
+          path: '',
+          name: 'adminHome',
+          component: AdminHome,
+        },
+        // {
+        //   path: 'users',
+        //   name: 'userManage',
+        //   component: UserManage,
+        // },
+        // {
+        //   path: 'sushi',
+        //   name: 'sushiManage',
+        //   component: SushiManage,
+        // },
+        // {
+        //   path: 'comments',
+        //   name: 'commentManage',
+        //   component: CommentManage,
+        // }
+      ],
+      beforeEnter: (to, from, next) => {
+        const adminName = localStorage.getItem('admin_name');
+        if (!adminName) {
+          next('/admin-login');
+        } else {
+          next();
+        }
+      }
     }
   ],
 })
 
 router.beforeEach(async (to, from, next) => {
+  if (to.path.startsWith('/admin') || to.path === '/admin-login') {
+    next();
+    return;
+  }
+
   const user_name = localStorage.getItem('user_name');
   let isavailable = false;
 
