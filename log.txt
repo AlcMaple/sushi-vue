@@ -1,0 +1,37 @@
+- 寿司网站收藏部分添加跳转，点击收藏的寿司会跳转到相应的寿司文章
+
+1. 修改src/views/User/components/Profix.vue文件，添加路由跳转功能
+```js
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+const goToDetail = (name, image) => {
+  router.push({
+    name: "detail",
+    query: { name, image },
+  });
+};
+```
+2. 然后在寿司文章渲染的地方添加一个跳转函数
+```html
+<div v-for="item in favorites" :key="item.id" class="sushi-card" 
+     @click="goToDetail(item.sushi_name, `/controllers/sushi_img/${item.sushi_name}.jpg`)">
+```
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+- 为寿司添加管理端，第一步写后端，参照后端的 log
+- 第三步才是写前端，创建管理端界面
+
+1. 新增页面跳转路由，更改 src/router/index.js 文件，新增管理端页面的跳转
+2. 创建管理端要调用后端的 api 接口，src/apis/admin.js
+3. 创新管理端登录界面，src/views/AdminSystem/AdminLogin.vue
+4. src/views/AdminSystem/AdminLayout.vue，这个是一个布局，后面寿司、用户、评论的管理都是它的子组件
+5. 创建管理端首页，src/views/AdminSystem/AdminHome.vue
+
+- 第四步，完善剩下的三个页面
+- 寿司管理页面，src/views/AdminSystem/SushiManage.vue
+- 用户管理页面，src/views/AdminSystem/UserManage.vue
+- 评论管理页面，src/views/AdminSystem/CommentManage.vue
