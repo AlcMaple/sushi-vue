@@ -32,6 +32,7 @@ const handleLogout = () => {
             background-color="#304156"
             text-color="#bfcbd9"
             active-text-color="#409EFF"
+            :border="false"
           >
             <el-menu-item index="/admin">
               <i class="fas fa-home"></i>
@@ -70,6 +71,7 @@ const handleLogout = () => {
 <style scoped>
 .admin-layout {
   height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -92,6 +94,7 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  padding: 0 20px;
 }
 
 .header-right {
@@ -107,5 +110,22 @@ const handleLogout = () => {
 .el-main {
   background-color: #f0f2f5;
   padding: 20px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.el-aside {
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+.el-container {
+  height: 100%;
+}
+
+/** 去除侧边栏有边框 */
+:deep(.el-menu) {
+  border-right: none !important;
 }
 </style>

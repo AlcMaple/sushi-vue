@@ -10,8 +10,12 @@ import { ElMessage, ElMessageBox } from "element-plus";
 
 const tableData = ref([]);
 const loading = ref(false);
+const allSushi = ref([]); // 存储所有寿司数据
+const currentPage = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
 
-// 对话框
+// 对话框相关
 const dialogVisible = ref(false);
 const isEdit = ref(false);
 const sushiForm = ref({
@@ -26,6 +30,7 @@ const sushiForm = ref({
 });
 const formTitle = ref("");
 
+// 步骤管理
 const newStep = ref("");
 const addStep = () => {
   if (newStep.value.trim()) {
@@ -42,13 +47,28 @@ const loadSushi = async () => {
   loading.value = true;
   try {
     const res = await adminGetSushiList();
-    tableData.value = res.data || [];
+    allSushi.value = res.data || [];
+    total.value = allSushi.value.length;
+    updatePageData();
   } catch (error) {
     console.error("获取寿司列表失败", error);
     ElMessage.error("获取寿司列表失败");
   } finally {
     loading.value = false;
   }
+};
+
+// 更新分页数据
+const updatePageData = () => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  tableData.value = allSushi.value.slice(start, end);
+};
+
+// 分页变化
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  updatePageData();
 };
 
 // 删除寿司
@@ -79,11 +99,7 @@ const handleEdit = (row) => {
     name: row.name,
     image: row.image.replace("controllers/sushi_img/", ""),
     price: row.price,
-    details: { ...row.details } || {
-      name_en: "",
-      description: "",
-      steps: [],
-    },
+    details: { ...row.details },
   };
   dialogVisible.value = true;
 };
@@ -197,27 +213,47 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="pagination-container">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          @current-change="handlePageChange"
+        />
+      </div>
     </el-card>
 
-    <!-- 编辑对话框 -->
+    <!-- 编辑对话框部分 -->
     <el-dialog v-model="dialogVisible" :title="formTitle" width="50%">
       <el-form :model="sushiForm" label-width="100px">
         <el-form-item label="寿司名称" required>
           <el-input v-model="sushiForm.name" :disabled="isEdit" />
         </el-form-item>
-        <el-form-item label="图片文件名" required>
+
+        <el-form-item label="上传图片" required>
+          <!-- 当前图片 -->
           <el-input
             v-model="sushiForm.image"
             placeholder="例如: salmon_sushi.jpg"
           />
           <div class="form-tip">图片路径: controllers/sushi_img/xxx.jpg</div>
+
+          <!-- 这里仅是示意性的上传控件，实际需要后端支持 -->
+          <div class="upload-hint">
+            <p>
+              提示：请将图片文件上传至服务器 controllers/sushi_img/
+              目录下，并在上方输入文件名
+            </p>
+          </div>
         </el-form-item>
+
         <el-form-item label="价格" required>
           <el-input-number v-model="sushiForm.price" :min="0" :precision="2" />
         </el-form-item>
-        <el-form-item label="英文名称">
-          <el-input v-model="sushiForm.details.name_en" />
-        </el-form-item>
+
         <el-form-item label="描述">
           <el-input
             v-model="sushiForm.details.description"
@@ -225,6 +261,7 @@ onMounted(() => {
             :rows="3"
           />
         </el-form-item>
+
         <el-form-item label="制作步骤">
           <div class="steps-container">
             <div
@@ -289,5 +326,18 @@ onMounted(() => {
   align-items: center;
   gap: 10px;
   margin-top: 10px;
+}
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+.upload-hint {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #606266;
 }
 </style>
