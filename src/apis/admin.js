@@ -79,3 +79,18 @@ export function deleteSushi(name) {
         method: 'delete'
     })
 }
+
+// 文件上传
+export function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return httpInstance({
+        url: '/admin/upload',
+        method: 'post',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}

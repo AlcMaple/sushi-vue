@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, computed } from "vue";
 import {
   adminGetSushiList,
   addSushi,
   updateSushi,
   deleteSushi,
+  // 上传图片
+  uploadFile,
 } from "@/apis/admin";
 import { ElMessage, ElMessageBox } from "element-plus";
 
@@ -40,6 +42,60 @@ const addStep = () => {
 };
 const removeStep = (index) => {
   sushiForm.value.details.steps.splice(index, 1);
+};
+
+// 上传图片
+const uploadLoading = ref(false);
+const imageUrl = ref("");
+
+// 上传图片
+const handleUpload = async (file) => {
+  uploadLoading.value = true;
+  try {
+    const res = await uploadFile(file);
+    sushiForm.value.image = res.data.filename;
+    imageUrl.value = `http://localhost:5001/${res.data.path}`;
+    ElMessage.success("上传成功");
+  } catch (error) {
+    console.error("上传失败", error);
+    ElMessage.error("上传失败");
+  } finally {
+    uploadLoading.value = false;
+  }
+};
+
+// 上传检查
+const beforeUpload = (file) => {
+  const isImage = file.type.startsWith("image/");
+  const isLt2M = file.size / 1024 / 1024 < 2;
+
+  if (!isImage) {
+    ElMessage.error("只能上传图片文件!");
+    return false;
+  }
+  if (!isLt2M) {
+    ElMessage.error("图片大小不能超过 2MB!");
+    return false;
+  }
+  return true;
+};
+
+// 预览图片
+const previewImage = computed(() => {
+  if (imageUrl.value) return imageUrl.value;
+  if (sushiForm.value.image) {
+    return `http://localhost:5001/controllers/sushi_img/${sushiForm.value.image}`;
+  }
+  return "";
+});
+
+// 重置上传表单
+const resetUpload = () => {
+  imageUrl.value = "";
+  if (isEdit.value && sushiForm.value.image) {
+    // 编辑模式下保留原图片预览
+    imageUrl.value = `http://localhost:5001/controllers/sushi_img/${sushiForm.value.image}`;
+  }
 };
 
 // 加载寿司数据
@@ -101,6 +157,7 @@ const handleEdit = (row) => {
     price: row.price,
     details: { ...row.details },
   };
+  resetUpload();
   dialogVisible.value = true;
 };
 
@@ -118,6 +175,7 @@ const handleAdd = () => {
       steps: [],
     },
   };
+  resetUpload();
   dialogVisible.value = true;
 };
 
@@ -233,21 +291,20 @@ onMounted(() => {
           <el-input v-model="sushiForm.name" :disabled="isEdit" />
         </el-form-item>
 
-        <el-form-item label="上传图片" required>
-          <!-- 当前图片 -->
-          <el-input
-            v-model="sushiForm.image"
-            placeholder="例如: salmon_sushi.jpg"
-          />
-          <div class="form-tip">图片路径: controllers/sushi_img/xxx.jpg</div>
-
-          <!-- 这里仅是示意性的上传控件，实际需要后端支持 -->
-          <div class="upload-hint">
-            <p>
-              提示：请将图片文件上传至服务器 controllers/sushi_img/
-              目录下，并在上方输入文件名
-            </p>
-          </div>
+        <el-form-item label="寿司图片" required>
+          <el-upload
+            class="avatar-uploader"
+            action="#"
+            :show-file-list="false"
+            :before-upload="beforeUpload"
+            :http-request="(options) => handleUpload(options.file)"
+          >
+            <img v-if="previewImage" :src="previewImage" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"
+              ><i class="fas fa-plus"></i
+            ></el-icon>
+          </el-upload>
+          <div class="form-tip">上传图片，大小不超过2MB</div>
         </el-form-item>
 
         <el-form-item label="价格" required>
@@ -339,5 +396,40 @@ onMounted(() => {
   border-radius: 4px;
   font-size: 12px;
   color: #606266;
+}
+
+/* 上传样式 */
+.avatar-uploader {
+  text-align: center;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 178px;
+  height: 178px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-uploader:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+  object-fit: cover;
 }
 </style>
